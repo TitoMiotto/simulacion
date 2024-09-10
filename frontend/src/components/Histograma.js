@@ -51,7 +51,7 @@ const Histograma = ({ histograma }) => {
       <div className="histograma-container" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', position: 'relative' }}>
         {/* Eje X */}
         <div style={ejeX}></div>
-        
+
         {/* Eje Y */}
         <div style={ejeY}></div>
 
@@ -62,7 +62,7 @@ const Histograma = ({ histograma }) => {
             style={{
               ...etiquetaEstilo,
               left: -50, // Ajusta la posición horizontal de las etiquetas Y
-              bottom: (4 - index) * (450 / 4) -10, // Ajusta la posición vertical
+              bottom: (4 - index) * (450 / 4) - 10, // Ajusta la posición vertical
               width: '50px',
               textAlign: 'right',
             }}
@@ -82,7 +82,7 @@ const Histograma = ({ histograma }) => {
               className="histograma-bar"
               style={{
                 width: `${ancho}px`,
-                height:`${altura}px`,
+                height: `${altura}px`,
                 backgroundColor: '#8884d8',
                 display: 'inline-block',
                 position: 'relative',

@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from distribution.uniforme import generar_uniforme
 from distribution.exponencial import generar_exponencial
 from distribution.normal import generar_normal
+from distribution.histograma import calcular_histograma
+import numpy as np
 
 # Inicializa la aplicación FastAPI
 app = FastAPI()
@@ -24,6 +26,7 @@ class DistributionRequest(BaseModel):
     param_b: float          # Parámetro 'b' (p.ej., en uniforme, es el límite superior)
     sample_size: int        # Tamaño de la muestra
     intervals: int          # Cantidad de intervalos para el histograma
+
 
 # Ruta para generar la distribución
 @app.post("/generate")
@@ -48,7 +51,8 @@ def generate_distribution(request: DistributionRequest):
         raise HTTPException(status_code=400, detail="Tipo de distribución no válida")
 
     print(f"Generated data: {result}")  # Log de depuración
-    return {"data": result}
+    histograma = calcular_histograma(result, request.intervals)
+    return {"data": histograma}
 
 # Ruta simple para verificar que el servidor está en funcionamiento
 @app.get("/")
