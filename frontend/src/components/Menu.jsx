@@ -28,7 +28,7 @@ function Menu() {
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/acciones">
-                primer tp
+                Primer TP
               </NavLink>
             </li>
           </ul>

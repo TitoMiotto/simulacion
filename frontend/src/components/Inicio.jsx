@@ -9,7 +9,7 @@ function Inicio() {
         className="mt-4 p-5 rounded"
         style={{ backgroundColor: "lightgray" }}
       >
-        <h1>Simulacion</h1>
+        <h1>Simulacion 4K4 </h1>
         <p>Sosa Franco 90308</p>
         <p>Reyna Juan 89336</p>
         <p>Mansilla Benjamin 90891</p>

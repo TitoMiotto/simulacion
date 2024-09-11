@@ -97,7 +97,7 @@ const Acciones = () => {
               <label className="form-label">Cantidad de intervalos:</label>
               <input type="text" className="form-control" {...register('intervalos')} />
             </div>
-            <button type="submit" className="btn btn-primary">Buscar</button>
+            <button type="submit" className="btn btn-primary">Aceptar</button>
           </form>
           {error && <div className="alert alert-danger mt-3">{error}</div>} {/* Mostrar mensaje de error */}
         </div>
