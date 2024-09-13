@@ -21,7 +21,7 @@ const Histograma = ({ histograma }) => {
     left: 0,
     width: '100%',
     height: '4px',
-    zIndex: 3, // Eje X arriba de todos
+    zIndex: 3,
   };
 
   const ejeY = {
@@ -30,24 +30,23 @@ const Histograma = ({ histograma }) => {
     left: 0,
     height: '100%',
     width: '4px',
-    zIndex: 2, // Eje Y debajo del eje X pero arriba del histograma
+    zIndex: 2,
   };
 
-  // Estilo para las etiquetas
   const etiquetaEstilo = {
     position: 'absolute',
-    fontSize: '12px',
+    fontSize: '14px', // Fuente más grande
     color: 'black',
     backgroundColor: 'white',
-    padding: '2px',
-    zIndex: 2, // Etiquetas del eje Y arriba del histograma pero debajo del eje X
+    borderRadius: '5px', // Bordes redondeados
+    padding: '2px 5px',
+    zIndex: 2,
   };
 
-  // Obtener los valores máximos del eje Y
   const etiquetasY = Array.from({ length: 5 }, (_, i) => mayor - (i * mayor / 4));
 
   return (
-    <div style={{ padding: 150, position: 'relative' }}>
+    <div style={{ padding: 50, position: 'relative' }}>
       <div className="histograma-container" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', position: 'relative' }}>
         {/* Eje X */}
         <div style={ejeX}></div>
@@ -61,8 +60,8 @@ const Histograma = ({ histograma }) => {
             key={`etiquetaY-${index}`}
             style={{
               ...etiquetaEstilo,
-              left: -50, // Ajusta la posición horizontal de las etiquetas Y
-              bottom: (4 - index) * (450 / 4) - 10, // Ajusta la posición vertical
+              left: -60,
+              bottom: (4 - index) * (450 / 4) - 10,
               width: '50px',
               textAlign: 'right',
             }}
@@ -71,7 +70,7 @@ const Histograma = ({ histograma }) => {
           </div>
         ))}
 
-        {/* Etiquetas del eje X */}
+        {/* Etiquetas y barras del eje X */}
         {histograma.map((intervalo, index) => {
           const ancho = 1500 / histograma.length;
           const altura = intervalo.cantidad * k;
@@ -80,25 +79,31 @@ const Histograma = ({ histograma }) => {
             <div
               key={index}
               className="histograma-bar"
+              title={`${intervalo.primerValor} - ${intervalo.ultimoValor}`} // Mostrar el rango completo al hacer hover
               style={{
-                width: `${ancho}px`,
+                width: `${ancho}px`, // Barras juntas
                 height: `${altura}px`,
-                backgroundColor: '#8884d8',
+                background: 'linear-gradient(180deg, #4facfe 0%, #00f2fe 100%)', // Gradiente para las barras
+                border: '1px solid black', // Borde negro alrededor de las barras
+                boxSizing: 'border-box', // Incluye el borde en el ancho de la barra
                 display: 'inline-block',
                 position: 'relative',
-                zIndex: 1, // Barras del histograma debajo de los ejes
+                zIndex: 1,
               }}
             >
               <div
                 style={{
                   position: 'absolute',
-                  bottom: '-20px', // Ajusta la posición vertical de las etiquetas X
+                  bottom: '-20px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  fontSize: '12px',
+                  fontSize: '14px',
+                  color: '#333',
+                  fontWeight: 'bold', // Negrita para resaltar los intervalos
+                  cursor: 'pointer', // Mostrar que es interactivo (hover)
                 }}
               >
-                {intervalo.primerValor + "-" + intervalo.ultimoValor} {/* Muestra el primerValor del intervalo */}
+                {intervalo.primerValor.toFixed(2) + "-" + intervalo.ultimoValor.toFixed(2)} {/* Mostrar con menos decimales */}
               </div>
             </div>
           );
