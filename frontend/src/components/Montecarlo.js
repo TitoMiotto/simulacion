@@ -17,20 +17,20 @@ const MonteCarlo = () => {
         throw new Error("Este valor debe estar entre 0 y 1.");
       }
       // Validaciones para la distribución exponencial
-      if ((parseFloat(data.datoB)+parseFloat(data.datoC))!==1) {
+      if ((parseFloat(data.datoB) + parseFloat(data.datoC)) !== 1) {
         throw new Error("La suma de las probabilidades de encontrar a la señora y señor de la casa deben ser igual a 1.");
       }
       // 
-      if ((parseFloat(data.dato1mujer)+parseFloat(data.dato2mujer)+parseFloat(data.dato3mujer))!==1) {
+      if (Math.round(((parseFloat(data.dato1mujer) + parseFloat(data.dato2mujer) + parseFloat(data.dato3mujer)) * 1000) / 1000) !== 1) {
         throw new Error("La suma de las probabilidades de la tabla de la señora deben ser igual a 1.");
-        }
-      if ((parseFloat(data.dato1hombre)+parseFloat(data.dato2hombre)+parseFloat(data.dato3hombre))!==1) {
+      }
+      if (Math.round(((parseFloat(data.dato1hombre) + parseFloat(data.dato2hombre) + parseFloat(data.dato3hombre)) * 1000) / 1000) !== 1) {
         throw new Error("La suma de las probabilidades de la tabla del señor deben ser igual a 1.");
-        }
+      }
 
       if (parseFloat(data.desde) >= parseFloat(data.hasta) || parseFloat(data.desde) <= 0 || parseFloat(data.hasta) > parseFloat(data.tamaño)) {
         throw new Error("Los parametros para mostrar la tabla estan incorrectos.");
-        }    
+      }
       // Imprime los datos que se van a enviar al backend
 
       let dato2hombre = parseFloat(data.dato1hombre) + parseFloat(data.dato2hombre);
@@ -49,12 +49,13 @@ const MonteCarlo = () => {
         tabla_prob_hombre_3: parseFloat(dato3hombre),
         desde: parseInt(data.desde),
         hasta: parseInt(data.hasta),
-        cantidad: parseInt(data.tamaño)
+        cantidad: parseInt(data.tamaño),
+        comision: parseInt(data.precio)
       });
 
-  
+
       // Solicitud POST al backend
-      const response = await axios.post('http://localhost:8001/generate', {
+      const response = await axios.post('http://localhost:8000/generate', {
         realizar_venta_mujer: parseFloat(data.datoA),
         encontrar_mujer: parseFloat(data.datoB),
         encontrar_hombre: parseFloat(data.datoC),
@@ -66,9 +67,10 @@ const MonteCarlo = () => {
         tabla_prob_hombre_3: parseFloat(data.dato3hombre),
         desde: parseInt(data.desde),
         hasta: parseInt(data.hasta),
-        cantidad: parseInt(data.tamaño)
+        cantidad: parseInt(data.tamaño),
+        comision: parseInt(data.precio)
       });
-  
+
       // Verifica la estructura de los datos recibidos
       if (response.data && Array.isArray(response.data.data)) {
         setLista(response.data.data);
@@ -78,12 +80,12 @@ const MonteCarlo = () => {
       } else {
         throw new Error('Datos inválidos recibidos del servidor.');
       }
-  
+
     } catch (error) {
       console.error('Error en la solicitud:', error.message);
       setError(error.message);  // Muestra el error al usuario
     }
-  };  
+  };
 
   return (
     <div className="container">
@@ -125,25 +127,29 @@ const MonteCarlo = () => {
               <label className="form-label">Tamaño de la muestra:</label>
               <input type="text" className="form-control" {...register('tamaño')} />
             </div>
+            <div className="mb-3">
+              <label className="form-label">Comision del vendedor:</label>
+              <input type="text" className="form-control" {...register('precio')} />
+            </div>
             <button type="submit" className="btn btn-primary">Aceptar</button>
           </form>
           {error && <div className="alert alert-danger mt-3">{error}</div>} {/* Mostrar mensaje de error */}
         </div>
         <div className="mt-3">
-      <label>La probabilidad de vender 2 o mas a una señora es:</label>
-      <div>{estadisticas[0]}</div> {/* Muestra el valor */}
-    </div>
-    <div className="mt-3">
-      <label>La probabilidad de vender del vendedor es:</label>
-      <div>{estadisticas[1]}</div> {/* Muestra el valor */}
-    </div>
+          <label>La probabilidad de vender 2 o mas a una señora es:</label>
+          <div>{estadisticas[0]}</div> {/* Muestra el valor */}
+        </div>
+        <div className="mt-3">
+          <label>La probabilidad de vender del vendedor es:</label>
+          <div>{estadisticas[1]}</div> {/* Muestra el valor */}
+        </div>
       </div>
       {Lista.length > 0 && (
-  <>
-    {console.log(Lista)} {/* Depuración para verificar los datos */}
-    <ListadoMontecarlo lista={Lista} />
-  </>
-)}
+        <>
+          {console.log(Lista)} {/* Depuración para verificar los datos */}
+          <ListadoMontecarlo lista={Lista} />
+        </>
+      )}
 
     </div>
   );

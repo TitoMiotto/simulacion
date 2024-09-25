@@ -1,29 +1,39 @@
 import React from 'react';
 
 const ListadoMontecarlo = ({ lista }) => {
-  
+
   return (
     <div className="container mt-3">
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>toco_puerta</th>
-            <th>abrio_puerta</th>
-            <th>realizar_venta</th>
-            <th>prob_cantidad</th>
-            <th>vendio</th>
-            <th>cantidad_vendida</th>
+            <th>Visita</th>
+            <th>Toco_Puerta</th>
+            <th>Atendieron?</th>
+            <th>Abrio_Puerta</th>
+            <th>Quien?</th>
+            <th>Realizar_Venta</th>
+            <th>Vendieron?</th>
+            <th>Prob_Cantidad</th>
+            <th>Vendio</th>
+            <th>Cantidad_Vendida</th>
+            <th>Comision_Ganada</th>
           </tr>
         </thead>
         <tbody>
           {lista.map((item, index) => (
             <tr key={index}>
-              <td>{item[0]}</td> {/* toco_puerta */}
-              <td>{item[1]}</td> {/* abrio_puerta */}
-              <td>{item[2]}</td> {/* realizar_venta */}
-              <td>{item[3]}</td> {/* prob_cantidad */}
-              <td>{item[4]}</td> {/* vendio */}
-              <td>{item[5]}</td> {/* cantidad_vendida */}
+              <td>{index + 1}</td> {/* Visita */}
+              <td>{item[0]}</td> {/* Toco_Puerta */}
+              <td>{item[8]}</td> {/* Atendieron? */}
+              <td>{item[1]}</td> {/* Abrio_Puerta */}
+              <td>{item[7]}</td> {/* Quien? */}
+              <td>{item[2]}</td> {/* Realizar_Venta */}
+              <td>{item[9]}</td> {/* Vendieron? */}
+              <td>{item[3]}</td> {/* Prob_Cantidad */}
+              <td>{item[4]}</td> {/* Vendio */}
+              <td>{item[5]}</td> {/* Cantidad_Vendida */}
+              <td>{item[6]}</td> {/* Comision_Ganada */}
             </tr>
           ))}
         </tbody>

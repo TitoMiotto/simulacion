@@ -30,6 +30,7 @@ class ConfiguracionRequest(BaseModel):
     desde: int
     hasta: int
     cantidad: int
+    comision: int
 
 
 # Ruta para generar la distribución
@@ -41,20 +42,28 @@ def generate_montecarlo(request: ConfiguracionRequest):
         log = []
         prob_de_vender = 0
         prob_de_vender_2mas_señora = 0
-        cantidad_vendida = 0
+        cantidad_vendida = False
+        comision_total = False
         for count in range(0, request.cantidad):
-            toco_puerta = random.random()
+            quien = ""
+            atendieron = "No"
+            vendieron = ""
+            toco_puerta = round(random.random(),4)
             abrio_puerta = False
             realizar_venta = False
             prob_cantidad = False
-            vendio = 0
+            vendio = False
             if toco_puerta < 0.7:
-                abrio_puerta = random.random()
-                realizar_venta = random.random()
+                atendieron = "Si"
+                abrio_puerta = round(random.random(),4)
+                realizar_venta = round(random.random(),4)                                                    
+                vendieron = "No"
                 if abrio_puerta < request.encontrar_mujer:
+                    quien = "Mujer"
                     prob_de_vender+=1
                     if realizar_venta > request.realizar_venta_mujer:
-                        prob_cantidad = random.random()
+                        vendieron = "Si"
+                        prob_cantidad = round(random.random(),4)
                         if prob_cantidad < request.tabla_prob_mujer_1:
                             vendio = 1
                         elif prob_cantidad < request.tabla_prob_mujer_2:
@@ -63,10 +72,13 @@ def generate_montecarlo(request: ConfiguracionRequest):
                         else:
                             prob_de_vender_2mas_señora+=1
                             vendio = 3
-                else:
-                    if realizar_venta > 0.25:
+                else:    
+                    quien = "Hombre"                                       
+                    vendieron = "No"
+                    if realizar_venta <= 0.25:                   
+                        vendieron = "Si"
                         prob_de_vender+=1
-                        prob_cantidad = random.random()
+                        prob_cantidad = round(random.random(),4)
                         if prob_cantidad < request.tabla_prob_hombre_1:
                             vendio = 1
                         elif prob_cantidad < request.tabla_prob_hombre_2:
@@ -75,14 +87,19 @@ def generate_montecarlo(request: ConfiguracionRequest):
                             vendio = 3
                         else:
                             vendio = 4
-            cantidad_vendida+=vendio
+
+            if vendio != False:            # Acumulamos solo si hay ventas
+                cantidad_vendida += vendio
+                comision_total += request.comision * vendio
+
+            # Agregar el ingreso al log....
             if request.desde <= count <= request.hasta:
-                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida]
+                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron]
                 log.append(nuevo_ingreso)
                 print(nuevo_ingreso)
 
-        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida])
-        estadisticas = [prob_de_vender_2mas_señora/request.cantidad * 100 , prob_de_vender/request.cantidad * 100]
+        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total])
+        estadisticas = [round((prob_de_vender_2mas_señora/request.cantidad * 100),2) , round((prob_de_vender/request.cantidad * 100),2)]
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
