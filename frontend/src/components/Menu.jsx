@@ -31,6 +31,11 @@ function Menu() {
                 Primer TP
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/monteCarlo">
+                Segundo TP
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
