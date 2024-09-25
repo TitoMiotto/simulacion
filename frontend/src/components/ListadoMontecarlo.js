@@ -23,7 +23,7 @@ const ListadoMontecarlo = ({ lista }) => {
         <tbody>
           {lista.map((item, index) => (
             <tr key={index}>
-              <td>{index + 1}</td> {/* Visita */}
+              <td>{item[10]}</td> {/* Visita */}
               <td>{item[0]}</td> {/* Toco_Puerta */}
               <td>{item[8]}</td> {/* Atendieron? */}
               <td>{item[1]}</td> {/* Abrio_Puerta */}

@@ -44,7 +44,9 @@ def generate_montecarlo(request: ConfiguracionRequest):
         prob_de_vender_2mas_señora = 0
         cantidad_vendida = False
         comision_total = False
+        visita = 0
         for count in range(0, request.cantidad):
+            visita += 1
             quien = ""
             atendieron = "No"
             vendieron = ""
@@ -61,12 +63,12 @@ def generate_montecarlo(request: ConfiguracionRequest):
                 if abrio_puerta < request.encontrar_mujer:
                     quien = "Mujer"
                     prob_de_vender+=1
-                    if realizar_venta > request.realizar_venta_mujer:
+                    if realizar_venta <= request.realizar_venta_mujer:
                         vendieron = "Si"
                         prob_cantidad = round(random.random(),4)
                         if prob_cantidad < request.tabla_prob_mujer_1:
                             vendio = 1
-                        elif prob_cantidad < request.tabla_prob_mujer_2:
+                        elif prob_cantidad < (request.tabla_prob_mujer_2+request.tabla_prob_mujer_1):
                             prob_de_vender_2mas_señora+=1
                             vendio = 2
                         else:
@@ -81,9 +83,9 @@ def generate_montecarlo(request: ConfiguracionRequest):
                         prob_cantidad = round(random.random(),4)
                         if prob_cantidad < request.tabla_prob_hombre_1:
                             vendio = 1
-                        elif prob_cantidad < request.tabla_prob_hombre_2:
+                        elif prob_cantidad < (request.tabla_prob_hombre_2 + request.tabla_prob_hombre_1):
                             vendio = 2
-                        elif prob_cantidad < request.tabla_prob_hombre_3:
+                        elif prob_cantidad < (request.tabla_prob_hombre_2 + request.tabla_prob_hombre_1 + request.tabla_prob_hombre_3):
                             vendio = 3
                         else:
                             vendio = 4
@@ -94,11 +96,11 @@ def generate_montecarlo(request: ConfiguracionRequest):
 
             # Agregar el ingreso al log....
             if request.desde <= count <= request.hasta:
-                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron]
+                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita]
                 log.append(nuevo_ingreso)
                 print(nuevo_ingreso)
 
-        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total])
+        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita])
         estadisticas = [round((prob_de_vender_2mas_señora/request.cantidad * 100),2) , round((prob_de_vender/request.cantidad * 100),2)]
 
     except ValueError as e:

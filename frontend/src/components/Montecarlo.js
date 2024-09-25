@@ -28,7 +28,7 @@ const MonteCarlo = () => {
         throw new Error("La suma de las probabilidades de la tabla del señor deben ser igual a 1.");
       }
 
-      if (parseFloat(data.desde) >= parseFloat(data.hasta) || parseFloat(data.desde) <= 0 || parseFloat(data.hasta) > parseFloat(data.tamaño)) {
+      if (parseFloat(data.desde) >= parseFloat(data.hasta) || parseFloat(data.desde) < 0 || parseFloat(data.hasta) > parseFloat(data.tamaño)) {
         throw new Error("Los parametros para mostrar la tabla estan incorrectos.");
       }
       // Imprime los datos que se van a enviar al backend
