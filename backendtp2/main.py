@@ -41,10 +41,12 @@ def generate_montecarlo(request: ConfiguracionRequest):
         
         log = []
         prob_de_vender = 0
+        prob_de_vender_ñora = 0
         prob_de_vender_2mas_señora = 0
         cantidad_vendida = False
         comision_total = False
         visita = 0
+        ves
         for count in range(0, request.cantidad):
             visita += 1
             quien = ""
@@ -65,6 +67,7 @@ def generate_montecarlo(request: ConfiguracionRequest):
                     prob_de_vender+=1
                     if realizar_venta <= request.realizar_venta_mujer:
                         vendieron = "Si"
+                        prob_de_vender_ñora += 1
                         prob_cantidad = round(random.random(),4)
                         if prob_cantidad < request.tabla_prob_mujer_1:
                             vendio = 1
@@ -91,16 +94,17 @@ def generate_montecarlo(request: ConfiguracionRequest):
                             vendio = 4
 
             if vendio != False:            # Acumulamos solo si hay ventas
-                cantidad_vendida += vendio
+                cantidad_vendida = prob_de_vender
                 comision_total += request.comision * vendio
 
             # Agregar el ingreso al log....
             if request.desde <= count <= request.hasta:
-                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita]
+                nuevo_ingreso = [toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita,prob_de_vender_ñora,prob_de_vender_2mas_señora]
                 log.append(nuevo_ingreso)
                 print(nuevo_ingreso)
 
-        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita])
+
+        log.append([toco_puerta, abrio_puerta, realizar_venta, prob_cantidad, vendio, cantidad_vendida, comision_total, quien, atendieron, vendieron, visita, prob_de_vender_ñora,prob_de_vender_2mas_señora])
         estadisticas = [round((prob_de_vender_2mas_señora/request.cantidad * 100),2) , round((prob_de_vender/request.cantidad * 100),2)]
 
     except ValueError as e:

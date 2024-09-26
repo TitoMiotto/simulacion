@@ -13,6 +13,9 @@ const MonteCarlo = () => {
   const onSubmit = async (data) => {
     try {
       // Validaciones para la distribución uniforme
+      if (parseInt(data.precio) < 0){
+        throw new Error("El valor de la comision del vendedor no puede ser negativa.")
+      }
       if (parseFloat(data.datoA) < 0 || parseFloat(data.datoA) > 1) {
         throw new Error("Este valor debe estar entre 0 y 1.");
       }
@@ -20,14 +23,22 @@ const MonteCarlo = () => {
       if ((parseFloat(data.datoB) + parseFloat(data.datoC)) !== 1) {
         throw new Error("La suma de las probabilidades de encontrar a la señora y señor de la casa deben ser igual a 1.");
       }
+      if (parseFloat(data.datoB) <0 || parseFloat(data.datoC) <0 || parseFloat(data.datoB) > 1 || parseFloat(data.datoC) > 1) {
+        throw new Error("La suma de las probabilidades de encontrar a la señora y señor de la casa deben estar entre 0 y 1.");
+      }
       // 
       if (Math.round(((parseFloat(data.dato1mujer) + parseFloat(data.dato2mujer) + parseFloat(data.dato3mujer)) * 1000) / 1000) !== 1) {
         throw new Error("La suma de las probabilidades de la tabla de la señora deben ser igual a 1.");
+      }       
+      if (parseFloat(data.dato1mujer) < 0 || parseFloat(data.dato2mujer) <0 || parseFloat(data.dato3mujer)<0 || parseFloat(data.dato1mujer) > 1 || parseFloat(data.dato2mujer) > 1 || parseFloat(data.dato3mujer) > 1 ) {
+        throw new Error("La suma de las probabilidades de la tabla de la señora deben estar entre 0 y 1.");
       }
-      if (Math.round(((parseFloat(data.dato1hombre) + parseFloat(data.dato2hombre) + parseFloat(data.dato3hombre)) * 1000) / 1000) !== 1) {
+      if (parseFloat(data.dato1hombre) + parseFloat(data.dato2hombre) + parseFloat(data.dato3hombre) + parseFloat(data.dato4hombre) !== 1) {
         throw new Error("La suma de las probabilidades de la tabla del señor deben ser igual a 1.");
       }
-
+      if (parseFloat(data.dato1hombre) < 0 || parseFloat(data.dato2hombre) < 0 || parseFloat(data.dato3hombre) < 0 || parseFloat(data.dato4hombre) < 0 || parseFloat(data.dato1hombre) > 1 || parseFloat(data.dato2hombre) > 1 || parseFloat(data.dato3hombre) > 1 || parseFloat(data.dato4hombre) > 1 ) {
+        throw new Error("La suma de las probabilidades de la tabla del señor deben estar entre 0 y 1.");
+      }
       if (parseFloat(data.desde) >= parseFloat(data.hasta) || parseFloat(data.desde) < 0 || parseFloat(data.hasta) > parseFloat(data.tamaño)) {
         throw new Error("Los parametros para mostrar la tabla estan incorrectos.");
       }
@@ -37,6 +48,7 @@ const MonteCarlo = () => {
       let dato3hombre = dato2hombre + parseFloat(data.dato3hombre);
       let dato2mujer = parseFloat(data.dato1mujer) + parseFloat(data.dato2mujer);
       let dato3mujer = dato2mujer + parseFloat(data.dato3mujer);
+      let dato4hombre = dato3hombre + parseFloat(data.dato4hombre);
       console.log('Datos enviados:', {
         realizar_venta_mujer: parseFloat(data.datoA),
         encontrar_mujer: parseFloat(data.datoB),
@@ -47,6 +59,7 @@ const MonteCarlo = () => {
         tabla_prob_hombre_1: parseFloat(data.dato1hombre),
         tabla_prob_hombre_2: parseFloat(dato2hombre),
         tabla_prob_hombre_3: parseFloat(dato3hombre),
+        tabla_prob_hombre_4: parseFloat(dato4hombre),
         desde: parseInt(data.desde),
         hasta: parseInt(data.hasta),
         cantidad: parseInt(data.tamaño),
@@ -117,6 +130,7 @@ const MonteCarlo = () => {
               <input type="text" className="form-control" {...register('dato1hombre')} />
               <input type="text" className="form-control" {...register('dato2hombre')} />
               <input type="text" className="form-control" {...register('dato3hombre')} />
+              <input type="text" className="form-control" {...register('dato4hombre')} />
             </div>
             <div className="mb-3">
               <label className="form-label">Mostrar desde-hasta:</label>

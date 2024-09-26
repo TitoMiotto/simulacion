@@ -17,6 +17,8 @@ const ListadoMontecarlo = ({ lista }) => {
             <th>Prob_Cantidad</th>
             <th>Vendio</th>
             <th>Cantidad_Vendida</th>
+            <th>Venta_Mujer</th>
+            <th>Venta_2_Mujer</th>
             <th>Comision_Ganada</th>
           </tr>
         </thead>
@@ -33,6 +35,8 @@ const ListadoMontecarlo = ({ lista }) => {
               <td>{item[3]}</td> {/* Prob_Cantidad */}
               <td>{item[4]}</td> {/* Vendio */}
               <td>{item[5]}</td> {/* Cantidad_Vendida */}
+              <td>{item[11]}</td> {/* Venta_Mujer */}
+              <td>{item[12]}</td> {/* Venta_2_Mujer */}
               <td>{item[6]}</td> {/* Comision_Ganada */}
             </tr>
           ))}
