@@ -36,6 +36,11 @@ function Menu() {
                 Segundo TP
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/colas">
+                Tercer TP
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
@@ -43,4 +48,4 @@ function Menu() {
   );
 }
 
-export {Menu};
+export { Menu };

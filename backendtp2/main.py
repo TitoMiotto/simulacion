@@ -53,44 +53,59 @@ def generate_montecarlo(request: ConfiguracionRequest):
             realizar_venta = False
             prob_cantidad = False
             vendio = False
+            #cantidad_vendida_actual = 0  # Reinicia la cantidad vendida en cada iteración
+            #comision_total_actual = 0    # Reinicia la comisión para la venta actual
+            
             if toco_puerta < 0.7:
                 atendieron = "Si"
                 abrio_puerta = round(random.random(),4)
-                realizar_venta = round(random.random(),4)                                                    
                 vendieron = "No"
                 if abrio_puerta < request.encontrar_mujer:
                     quien = "Mujer"
                     prob_de_vender+=1
+                    vendio = False
+                    realizar_venta = round(random.random(),4)                                               
+
                     if realizar_venta > request.realizar_venta_mujer:
                         vendieron = "Si"
                         prob_cantidad = round(random.random(),4)
-                        if prob_cantidad < request.tabla_prob_mujer_1:
+                        if prob_cantidad <= request.tabla_prob_mujer_1:
                             vendio = 1
-                        elif prob_cantidad < request.tabla_prob_mujer_2:
+                        elif prob_cantidad <= request.tabla_prob_mujer_2:
                             prob_de_vender_2mas_señora+=1
                             vendio = 2
                         else:
                             prob_de_vender_2mas_señora+=1
                             vendio = 3
+                    else:
+                        vendio = False
+
                 else:    
                     quien = "Hombre"                                       
                     vendieron = "No"
+                    vendio = False
+                    realizar_venta = round(random.random(),4)                                               
+
                     if realizar_venta <= 0.25:                   
                         vendieron = "Si"
                         prob_de_vender+=1
                         prob_cantidad = round(random.random(),4)
-                        if prob_cantidad < request.tabla_prob_hombre_1:
+                        if prob_cantidad <= request.tabla_prob_hombre_1:
                             vendio = 1
-                        elif prob_cantidad < request.tabla_prob_hombre_2:
+                        elif prob_cantidad <= request.tabla_prob_hombre_2:
                             vendio = 2
-                        elif prob_cantidad < request.tabla_prob_hombre_3:
+                        elif prob_cantidad <= request.tabla_prob_hombre_3:
                             vendio = 3
                         else:
                             vendio = 4
+                    else:
+                        vendio = False
 
             if vendio != False:            # Acumulamos solo si hay ventas
                 cantidad_vendida += vendio
                 comision_total += request.comision * vendio
+                #cantidad_vendida += cantidad_vendida_actual
+                #comision_total += comision_total_actual
 
             # Agregar el ingreso al log....
             if request.desde <= count <= request.hasta:
