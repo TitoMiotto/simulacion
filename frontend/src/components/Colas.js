@@ -18,15 +18,15 @@ const Colas = () => {
 
             // Enviar los datos al backend
             const response = await axios.post('http://localhost:8000/generate', {
-                tiempo_simulacion: parseInt(data.tiempo),
-                iteraciones_mostrar: parseInt(data.iteracion_i),
-                hora_inicio: parseInt(data.hora_inicio),
-                tiempo_entre_llegadas: parseFloat(data.llegadas),
+                duracion_total: parseInt(data.tiempo),
+                //iteraciones_mostrar: parseInt(data.iteracion_i),
+                //hora_inicio: parseInt(data.hora_inicio),
+                proxima_llegada: parseFloat(data.llegadas),
                 tabla_prob_auto_1: parseFloat(data.dato1auto),
                 tabla_prob_auto_2: parseFloat(dato2auto),
-                tabla_prob_hora_1: parseFloat(data.dato1hora),
-                tabla_prob_hora_2: parseFloat(dato2hora),
-                tabla_prob_hora_3: parseFloat(dato3hora),
+                tabla_prob_duracion1: parseFloat(data.dato1hora),
+                tabla_prob_duracion2: parseFloat(dato2hora),
+                tabla_prob_duracion3: parseFloat(dato3hora),
                 tiempo_cobro: parseFloat(data.cobro),
             });
 

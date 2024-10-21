@@ -14,8 +14,9 @@ const ListadoColas = ({ lista }) => {
                         <th>Vehiculo</th>
                         <th>Tipo_Vehiculo</th>
                         <th>Estacionamiento</th>
-                        <th>Salida</th>
+                        <th>Duracion</th>
                         <th>Tipo_Salida</th>
+                        <th>Salida</th>
                         <th>Recaudacion</th>
                         <th>Porcentaje_Uso</th>
                         <th>Promedio_Tiempo</th>
@@ -24,18 +25,19 @@ const ListadoColas = ({ lista }) => {
                 <tbody>
                     {lista.map((item, index) => (
                         <tr key={index}>
-                            <td>{index + 1}</td> {/* Iteracion */}
-                            <td>{item[0]}</td> {/* Tiempo */}
-                            <td>{item[8]}</td> {/* Evento */}
-                            <td>{item[1]}</td> {/* Siguiente_Evento */}
-                            <td>{item[7]}</td> {/* Vehiculo */}
-                            <td>{item[2]}</td> {/* Tipo_Vehiculo */}
-                            <td>{item[9]}</td> {/* Estacionamiento */}
-                            <td>{item[3]}</td> {/* Salida */}
-                            <td>{item[4]}</td> {/* Tipo_Salida */}
-                            <td>{item[5]}</td> {/* Recaudacion */}
-                            <td>{item[6]}</td> {/* Porcentaje_Uso */}
-                            <td>{item[7]}</td> {/* Promedio_Tiempo */}
+                            <td>{item[0]}</td> {/* Iteracion */}
+                            <td>{item[1]}</td> {/* Tiempo */}
+                            <td>{item[2]}</td> {/* Evento */}
+                            <td>{item[3]}</td> {/* Siguiente_Evento */}
+                            <td>{item[4]}</td> {/* Vehiculo */}
+                            <td>{item[5]}</td> {/* Tipo_Vehiculo */}
+                            <td>{item[6]}</td> {/* Estacionamiento */}
+                            <td>{item[7]}</td> {/* Duracion */}
+                            <td>{item[8]}</td> {/* Tipo_Salida */}
+                            <td>{item[9]}</td> {/* Salida */}
+                            <td>{item[10]}</td> {/* Recaudacion */}
+                            <td>{item[11]}</td> {/* Porcentaje_Uso */}
+                            <td>{item[12]}</td> {/* Promedio_Tiempo */}
                         </tr>
                     ))}
                 </tbody>
