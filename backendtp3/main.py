@@ -51,7 +51,10 @@ def generate_colas(request: ConfiguracionRequest):
         # Estado inicial (tiempo 0)
         #log.append("Tiempo 0: Estacionamiento vacío.")
         log.append([0,0,"Apertura","Proxima Llegada",0,"","",0,0,0,0.0,0.0])     
-           
+        sum_tiempo_ocupado = 0
+        prom_tiempo_ocupado = 0
+        sum_tiempo_esperando = 0
+        prom_tiempo_esperando = 0
         for tiempo_transcurrido in range(request.duracion_total):
             # Procesar entrada de vehículos
             if tiempo_transcurrido == tiempo_siguiente_llegada:  # Un vehículo llega cada proxima_llegada minutos
@@ -91,10 +94,10 @@ def generate_colas(request: ConfiguracionRequest):
                     ocupados = sum(1 for espacio in estacionamiento if espacio is not None)
                     
                     #log.append(f"Tiempo {tiempo_transcurrido}: Vehículo {tipo_vehiculo} entra en espacio {primer_vacio}. Salida programada en {salida} minutos.")
-                    log.append([iteracion,tiempo_transcurrido,"Vehículo ingresa","",auto_que_entra,tipo_vehiculo,f"{primer_vacio} ocupado",cuanto_dura,duracion_estacionamiento,salida,recaudacion,(ocupados/8),0.0])
+                    log.append([iteracion,tiempo_transcurrido,"Vehículo ingresa","",auto_que_entra,tipo_vehiculo,f"{primer_vacio} ocupado",cuanto_dura,duracion_estacionamiento,salida,recaudacion,prom_tiempo_ocupado,0.0])
                 else:
                     #log.append([0,0,"Apertura","Proxima Llegada",0,"","",0,0,0,0.0,0.0])
-                    log.append([iteracion,tiempo_transcurrido,"Estacionamiento lleno. Vehículo pasa de largo.","",0,"","",0,0,0,recaudacion,1.0,0.0])
+                    log.append([iteracion,tiempo_transcurrido,"Estacionamiento lleno. Vehículo pasa de largo.","",0,"","",0,0,0,recaudacion,prom_tiempo_ocupado,0.0])
                     #log.append(f"Tiempo {tiempo_transcurrido}: Estacionamiento lleno. Vehículo pasa de largo.")
 
                 tiempo_siguiente_llegada += request.proxima_llegada  # Actualizar el tiempo de la próxima llegada
@@ -110,7 +113,8 @@ def generate_colas(request: ConfiguracionRequest):
                             recaudacion += round(salida[3] * round((1500/60),4),0)
                         else:
                             recaudacion += round(salida[3] * round((3000/60),4),0)
-
+                        sum_tiempo_ocupado+=salida[3]
+                        prom_tiempo_ocupado= round(sum_tiempo_ocupado/(tiempo_transcurrido*8),4)
                         zona_cobro.append(salida)  # Mover a la zona de cobro
                         salidas.remove(salida)  # Eliminar de la lista de salidas
                         #log.append(f"Tiempo {tiempo_transcurrido}: Vehículo {salida[2]} en espacio {salida[1]} va a la zona de cobro.")
@@ -118,7 +122,10 @@ def generate_colas(request: ConfiguracionRequest):
                         #log.append([iteraciones,tiempo_transcurrido,"Vehículo va a la zona de cobro","",0,salida[2],f"{salida[1]}",0,0,0,recaudacion,(ocupados/8),0.0])
                     else:
                         ocupados = sum(1 for espacio in estacionamiento if espacio is not None)
-                        log.append([iteracion,tiempo_transcurrido,"Vehículo no puede ir a cobro, espera","",0,salida[2],f"{salida[1]}",0,0,0,recaudacion,(ocupados/8),0.0])
+                        print("*"*60)
+                        tiempo_hasta_esperar = zona_cobro[0][0] + request.tiempo_cobro
+                        sum_tiempo_esperando+= tiempo_hasta_esperar - tiempo_transcurrido
+                        log.append([iteracion,tiempo_transcurrido,"Vehículo no puede ir a cobro, espera","",0,salida[2],f"{salida[1]}",0,0,0,recaudacion,prom_tiempo_ocupado,0.0])
                         #log.append(f"Tiempo {tiempo_transcurrido}: Vehículo en espacio {salida[1]} no puede ir a cobro, espera.")
 
             # Procesar cobro de vehículos en la zona de cobro
@@ -163,7 +170,7 @@ def generate_colas(request: ConfiguracionRequest):
                 zona_cobro.pop(0)  # Remover el vehículo que ha sido cobrado
                 
                 # Registrar el evento en log
-                log.append([iteracion,tiempo_transcurrido,f"Vehículo en zona de cobro y se libera espacio {espacio_libre}","",0,vehiculo_cobro[2]+" Cobrando",f"{espacio_libre} Libre",0,0,0,recaudacion,(ocupados/8),0.0])
+                log.append([iteracion,tiempo_transcurrido,f"Vehículo en zona de cobro y se libera espacio {espacio_libre}","",0,vehiculo_cobro[2]+" Cobrando",f"{espacio_libre} Libre",0,0,0,recaudacion,prom_tiempo_ocupado,0.0])
 
 
                 # Cuando el tiempo en cobro alcanza `request.tiempo_cobro`, se completa el cobro
@@ -172,8 +179,7 @@ def generate_colas(request: ConfiguracionRequest):
                     tiempo_en_cobro = 0  # Reiniciar el contador de tiempo en cobro                    
                     
                     iteracion += 1  # Incremento de la iteración
-                    log.append([iteracion, tiempo_transcurrido + request.tiempo_cobro, f"Vehículo se retira", "", 0, vehiculo_cobro[2] + " se Retira", f"{espacio_libre} Libre", 0, 0, 0, recaudacion, (ocupados / 8), 0.0])
-                                    
+                    log.append([iteracion, tiempo_transcurrido + request.tiempo_cobro, f"Vehículo se retira", "", 0, vehiculo_cobro[2] + " se Retira", f"{espacio_libre} Libre", 0, 0, 0, recaudacion, prom_tiempo_ocupado, 0.0])   
             if iteracion > 10000:
                 ocupados = sum(1 for espacio in estacionamiento if espacio is not None)
                 log.append([iteracion,tiempo_transcurrido,"Finalizacion por Iteracin N° 10000","",0,"","",0,0,0,0.0,0.0])
