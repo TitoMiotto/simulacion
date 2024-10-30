@@ -15,12 +15,13 @@ const Colas = () => {
             let dato2auto = parseFloat(data.dato1auto) + parseFloat(data.dato2auto);
             let dato2hora = parseFloat(data.dato1hora) + parseFloat(data.dato2hora);
             let dato3hora = dato2hora + parseFloat(data.dato3hora);
+            let hora_inicio = data.hora_inicio * 60;
 
             // Enviar los datos al backend
             const response = await axios.post('http://localhost:8000/generate', {
                 duracion_total: parseInt(data.tiempo),
-                //iteraciones_mostrar: parseInt(data.iteracion_i),
-                //hora_inicio: parseInt(data.hora_inicio),
+                iteraciones: parseInt(data.iteracion_i),
+                hora_inicio: parseInt(hora_inicio),
                 proxima_llegada: parseFloat(data.llegadas),
                 tabla_prob_auto_1: parseFloat(data.dato1auto),
                 tabla_prob_auto_2: parseFloat(dato2auto),
