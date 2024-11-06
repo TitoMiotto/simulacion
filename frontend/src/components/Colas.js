@@ -34,7 +34,6 @@ const Colas = () => {
             // Verificar la estructura de los datos
             if (response.data && Array.isArray(response.data.data)) {
                 setLista(response.data.data);
-                setEstadisticas(response.data.estadisticas);
                 setError(""); // Limpiar cualquier error previo
             } else {
                 throw new Error('Datos inválidos recibidos del servidor.');
@@ -94,12 +93,6 @@ const Colas = () => {
                 <>
                     <ListadoColas lista={Lista} />
                 </>
-            )}
-            {estadisticas && (
-                <div className="mt-3">
-                    <h3>Estadísticas:</h3>
-                    <p>{estadisticas}</p>
-                </div>
             )}
         </div>
     );
