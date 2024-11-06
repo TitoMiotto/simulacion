@@ -12,6 +12,45 @@ const Colas = () => {
     const onSubmit = async (data) => {
         try {
 
+            // Validación de hora de inicio
+            if (parseInt(data.hora_inicio) > parseInt(data.tiempo)) {
+                throw new Error("La hora de inicio no puede ser mayor que el tiempo total simulado.");
+            }
+
+            // Validación de suma de probabilidades para auto
+            const sumaProbAuto = parseFloat(data.dato1auto) + parseFloat(data.dato2auto) + parseFloat(data.dato3auto);
+            if (sumaProbAuto !== 1) {
+                throw new Error("Las probabilidades para el tipo de vehículo deben sumar 1.");
+            }
+
+            // Validación de suma de probabilidades para duración
+            const sumaProbDuracion = parseFloat(data.dato1hora) + parseFloat(data.dato2hora) + parseFloat(data.dato3hora);
+            if (sumaProbDuracion !== 1) {
+                throw new Error("Las probabilidades para la duración deben sumar 1.");
+            }
+
+            // Validación de números negativos
+            const camposNegativos = [
+                data.tiempo, data.iteracion_i, data.hora_inicio, data.llegadas,
+                data.dato1auto, data.dato2auto, data.dato3auto,
+                data.dato1hora, data.dato2hora, data.dato3hora, data.cobro
+            ];
+
+            for (let campo of camposNegativos) {
+                if (parseFloat(campo) < 0) {
+                    throw new Error("Ningún campo puede contener valores negativos.");
+                }
+            }
+
+            // Validación de los tiempos de llegadas y cobros
+            if (parseFloat(data.llegadas) > parseInt(data.tiempo)) {
+                throw new Error("El tiempo entre llegadas no puede exceder el tiempo total simulado.");
+            }
+
+            if (parseFloat(data.cobro) > parseInt(data.tiempo)) {
+                throw new Error("El tiempo de cobro no puede exceder el tiempo total simulado.");
+            }
+
             let dato2auto = parseFloat(data.dato1auto) + parseFloat(data.dato2auto);
             let dato2hora = parseFloat(data.dato1hora) + parseFloat(data.dato2hora);
             let dato3hora = dato2hora + parseFloat(data.dato3hora);
