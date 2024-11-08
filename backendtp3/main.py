@@ -27,11 +27,11 @@ class Vehiculo:
             self.tipo = None  # Manejo en caso de que no se cumpla ninguna condición
 
     def getTiempoLlegada(self):
-        print(self.tiempoLlegada)
         return self.tiempoLlegada
     
     def setTiempoEstacionado(self, tiempo):
         self.tiempoEstacionado = tiempo
+
     def getTipo(self):
         if self.tipo < 2: return "Pequeño"
         if self.tipo < 4: return "Grande"
@@ -68,15 +68,17 @@ class Estacionamiento:
             self.TiempoEstacionado = 240  # Manejo en caso de que no se cumpla ninguna condición
         Vehiculo.setTiempoEstacionado(self.TiempoEstacionado)
     
-    def quitarVehiculo(self):
-        self.utilizacion += self.TiempoEstacionado
+    def quitarVehiculo(self, tiempoExtra):
+        self.utilizacion += tiempoExtra + self.TiempoEstacionado
         V = self.Vehiculo
         self.Vehiculo = None
         self.randomTiempo = 0
         return V
     
-    def utilizacionReal(self, tiempo):
-        return self.utilizacion + (tiempo - self.Vehiculo.tiempoLlegada)
+    def utilizacionActual(self, tiempo):
+        if self.Vehiculo:
+            return self.utilizacion + (tiempo - self.Vehiculo.tiempoLlegada)
+        return self.utilizacion
 
     @classmethod
     def setTablaValores(cls, valor1, valor2, valor3):
@@ -95,7 +97,7 @@ class LlegadaVehiculo:
         self.tipo = ""
 
     def simular(self):
-        for i in range(7):
+        for i in range(8):
             if self.__class__.vector_estacionamientos[i].Vehiculo is None:
                 self.rndTipo = random()
                 v1 = Vehiculo(self.rndTipo, self.tiempo)
@@ -108,7 +110,13 @@ class LlegadaVehiculo:
     def print(self):
 
         return (str(self.tiempo), str(self.tiempoEntreLlegadas + self.tiempo), str(self.rndTipo), self.tipo)
-        
+    
+    def getEvento(self):
+        return "Llegada de vehiculo"
+
+    def getTiempo(self):
+        return self.tiempo
+
 
 class FinDeEstacionamiento:
     vector_estacionamientos = None
@@ -123,12 +131,16 @@ class FinDeEstacionamiento:
             self.__class__.sectorCobro.vector_espera.append(self.indiceEstacionamiento)
             return [-1]
         else:
-            return [self.__class__.sectorCobro.setProximo(self.vector_estacionamientos[self.indiceEstacionamiento].quitarVehiculo())]
+            return [self.__class__.sectorCobro.setProximo(self.vector_estacionamientos[self.indiceEstacionamiento].quitarVehiculo(0))]
         
     def print(self):
         return (str(self.tiempo), str(self.indiceEstacionamiento))
 
+    def getEvento(self):
+        return f"Fin de Estacionamiento cochera{self.indiceEstacionamiento + 1}"
 
+    def getTiempo(self):
+        return self.tiempo
 
 class SectorCobro:
     vector_estacionamientos = None
@@ -161,15 +173,56 @@ class SectorCobro:
             if self.vector_espera:
                 indice = self.vector_espera.pop(0)
                 estacionamiento1 = self.__class__.vector_estacionamientos[indice]
-                self.totalMinEsperados += tiempo - (estacionamiento1.TiempoEstacionado + estacionamiento1.Vehiculo.tiempoLlegada)
+                tiempoExtraEsperado = tiempo - (estacionamiento1.TiempoEstacionado + estacionamiento1.Vehiculo.tiempoLlegada)
+                self.totalMinEsperados += tiempoExtraEsperado
                 self.contadorEstacionamientos +=1
-                self.proximo = estacionamiento1.quitarVehiculo()
+                self.proximo = estacionamiento1.quitarVehiculo(tiempoExtraEsperado)
             else:
                 self.proximo = None
             return True
         self.Actual = None
 
         return False
+    
+    def printEstacionamientos(self, tiempo):
+        mensaje=[""] * 8
+        for idx, estacionamiento in enumerate(self.vector_estacionamientos):
+            if estacionamiento.Vehiculo:
+                mensaje[idx]=(f"Estacionamiento {idx + 1}: \nVehiculo tipo {estacionamiento.Vehiculo.tipo}, \nTiempo Llegada {estacionamiento.Vehiculo.tiempoLlegada},  \nRnd de tiempo {estacionamiento.randomTiempo}, \nTiempo Estacionado {estacionamiento.TiempoEstacionado}, \nHora de irse {estacionamiento.TiempoEstacionado + estacionamiento.Vehiculo.getTiempoLlegada()}")
+
+            else:
+                mensaje[idx] = "vacio"
+            mensaje[idx] += (f"\nTiempo Utilizado {estacionamiento.utilizacionActual(tiempo)}")
+        return mensaje
+    
+    def promMin(self):
+        if self.contadorEstacionamientos:
+            prom = self.totalMinEsperados/self.contadorEstacionamientos
+        else:
+            prom = 0
+        return prom
+    
+    def getProximo(self):
+        if self.proximo != None:
+            return f"Vehiculo que llego en {self.proximo.tiempoLlegada}"
+        else:
+            return "Vacio"
+        
+    def getActual(self):
+        if self.Actual != None:
+            return f"Vehiculo que llego en {self.Actual.tiempoLlegada}"
+        else:
+            return "Vacio"
+        
+    def UtilizacionTotalActual(self,tiempo):
+        sum = 0
+        if tiempo == 0:
+            return 0
+        
+        for i in self.vector_estacionamientos:
+            sum += i.utilizacionActual(tiempo)
+        return sum/(8*tiempo)
+
                 
 
 
@@ -188,6 +241,12 @@ class EventoCobro:
 
     def print(self):
         return str(self.tiempo) 
+    
+    def getEvento(self):
+        return "Cobrar a Auto"
+    
+    def getTiempo(self):
+        return self.tiempo
 
   
 # Configuración de CORS
@@ -229,45 +288,37 @@ def generate_colas(request: ConfiguracionRequest):
         EventoCobro.sectorCobro = sectorCobro
         vector_eventos = [LlegadaVehiculo(request.proxima_llegada)]
         # Crear una lista para almacenar los datos de cada iteración
-        vector_eventos = [LlegadaVehiculo(1)]
         i = 0
         registro_iteraciones = []
-        while i < len(vector_eventos):
-            utilizacionTotal = 0
+        while vector_eventos[i].tiempo < request.duracion_total:
+
             # Imprimir el evento actual en la lista
             nuevos = [evento for evento in vector_eventos[i].simular() if evento != -1]
-            print("Procesando evento:", vector_eventos[i].print())
+            ProxLlegada = RndTipoAuto = AutoTipo = 0
             # Estado de los estacionamientos
-            print("\n--- Estado de Estacionamientos ---")
+            if isinstance(vector_eventos[i],LlegadaVehiculo):
 
-            for idx, estacionamiento in enumerate(vector_estacionamientos):
-                
-                if estacionamiento.Vehiculo:
-                    print(f"Estacionamiento {idx + 1}: Vehiculo tipo {estacionamiento.Vehiculo.tipo}, Tiempo Llegada {estacionamiento.Vehiculo.tiempoLlegada},  Rnd de tiempo {estacionamiento.randomTiempo}, Tiempo Estacionado {estacionamiento.TiempoEstacionado}, Hora de irse {estacionamiento.TiempoEstacionado + estacionamiento.Vehiculo.tiempoLlegada}, El tiempo utilizado es {estacionamiento.utilizacionReal(vector_eventos[i].tiempo)}")
-                    utilizacionTotal += estacionamiento.utilizacionReal(vector_eventos[i].tiempo)
-                else:
-                    print(f"Estacionamiento {idx + 1}: Vacío")
-            print(f"La utilizacion de estacionamiento {utilizacionTotal/(8*vector_eventos[i].tiempo)}: ")
-            
-            # Estado del Sector de Cobro
-            print("\n--- Estado del Sector Cobro ---")
-            if sectorCobro.Actual:
-                print(f"Vehículo Actual en Cobro: Tipo {sectorCobro.Actual.tipo}, Tiempo Llegada {sectorCobro.Actual.tiempoLlegada}, Tiempo Estacionado {sectorCobro.Actual.tiempoEstacionado}")
-            else:
-                print("Vehículo Actual en Cobro: Ninguno")
-            
-            if sectorCobro.proximo:
-                print(f"Vehículo en Espera para Cobro: Tipo {sectorCobro.proximo.tipo}, Tiempo Llegada {sectorCobro.proximo.tiempoLlegada}, Tiempo Estacionado {sectorCobro.proximo.tiempoEstacionado}")
-            else:
-                print("Vehículo en Espera para Cobro: Ninguno")
-            
-            print(f"Total Cobro Acumulado: {sectorCobro.sum_cobro}")
-            print(f"Contador de Estacionamientos Finalizados: {sectorCobro.contadorEstacionamientos}")
-            print(f"Vehículos en Espera para Cobro: {len(sectorCobro.vector_espera)}")
-            print(f"El total de minutos de espera es: {sectorCobro.totalMinEsperados}")
-            
-            # Procesar el evento actual y agregar nuevos eventos según el resultado
+                tiempo, ProxLlegada, RndTipoAuto, AutoTipo = vector_eventos[i].print()
 
+            
+            evento = vector_eventos[i].getEvento()
+            tiempo = vector_eventos[i].getTiempo()
+
+            
+            mensaje = sectorCobro.printEstacionamientos(tiempo)
+            actual = sectorCobro.getActual()
+            proximo = sectorCobro.getProximo()
+            promTotalMinEsperados = sectorCobro.promMin()
+            colaEspera = len(sectorCobro.vector_espera)
+            utilizacionTotal = sectorCobro.UtilizacionTotalActual(tiempo)
+
+            registro_iteraciones.append([
+                        tiempo, evento, ProxLlegada, RndTipoAuto, AutoTipo,
+                        mensaje[0],mensaje[1],mensaje[2],mensaje[3],mensaje[4], \
+                        mensaje[5],mensaje[6],mensaje[7], \
+                        sectorCobro.sum_cobro, colaEspera, actual, proximo,\
+                        utilizacionTotal, sectorCobro.totalMinEsperados, promTotalMinEsperados
+                    ])
             # Añadir los nuevos eventos al vector_eventos
             for nuevo in nuevos:
                 vector_eventos.append(nuevo)
@@ -276,33 +327,7 @@ def generate_colas(request: ConfiguracionRequest):
             vector_eventos.sort(key=lambda x: x.tiempo)
             
             i += 1  # Avanzar al siguiente evento
-            if i >100: break
-            
-            print("\n--- Fin de la Iteración ---\n")
-        i=0
-        while i < len(vector_eventos):
-            if isinstance(vector_eventos[i],LlegadaVehiculo):
-                evento = "Llegada de auto"
-                Llegadavehiculo, ProxLlegada, RndTipoAuto, AutoTipo = vector_eventos[i].print()
-            if isinstance(vector_eventos[i], FinDeEstacionamiento):
-                evento = "fin de estacionamiento"
-                tiempo, posicion = vector_eventos[i].print()
-            if isinstance(vector_eventos[i], EventoCobro):
-                evento = "Cobro"
-                tiempo = vector_eventos[i].print()
-            mensaje = [""*8]
-            l=0
-            for estacionamiento in vector_estacionamientos:
-                mensaje[l]=(f"Estacionamiento {idx + 1}: Vehiculo tipo {estacionamiento.Vehiculo.tipo}, Tiempo Llegada {estacionamiento.Vehiculo.tiempoLlegada},  Rnd de tiempo {estacionamiento.randomTiempo}, Tiempo Estacionado {estacionamiento.TiempoEstacionado}, Hora de irse {estacionamiento.TiempoEstacionado + estacionamiento.Vehiculo.tiempoLlegada}, El tiempo utilizado es {estacionamiento.utilizacionReal(vector_eventos[i].tiempo)}")
-                l+=1
 
-            registro_iteraciones.append([
-                        tiempo, evento, ProxLlegada, RndTipoAuto, AutoTipo,
-                        mensaje[0],mensaje[1],mensaje[2],mensaje[3],mensaje[4], \
-                        mensaje[5],mensaje[6],mensaje[7], \
-                        sectorCobro.sum_cobro, sectorCobro.vector_espera, sectorCobro.Actual.getTiempoLlegada, sectorCobro.proximo.getTiempoLlegada,\
-                        (utilizacionTotal/(8*vector_eventos[i].tiempo)), sectorCobro.totalMinEsperados, sectorCobro.totalMinEsperados/sectorCobro.contadorEstacionamientos
-                    ])
 
                     
         return {"data": registro_iteraciones}

@@ -21,7 +21,7 @@ const ListadoColas = ({ lista }) => {
                         <th>Estacionamiento 7</th>
                         <th>Estacionamiento 8</th>
                         <th>Recaudacion</th>
-                        <th>Cola de espera Cobro en estacionamiento</th>
+                        <th>Estacionados esperando cobro</th>
                         <th>Auto cobrando</th>
                         <th>prox Auto a cobrar</th>
                         <th>Porcentaje_Uso</th>
@@ -29,13 +29,6 @@ const ListadoColas = ({ lista }) => {
                         <th>Promedio_Tiempo</th>
                     </tr>
                 </thead>
-                ([
-                        tiempo, evento, ProxLlegada, RndTipoAuto, AutoTipo,
-                        mensaje[0],mensaje[1],mensaje[2],mensaje[3],mensaje[4], \
-                        mensaje[5],mensaje[6],mensaje[7], \
-                        sectorCobro.sum_cobro, sectorCobro.vector_espera, sectorCobro.Actual.getTiempoLlegada, sectorCobro.proximo.getTiempoLlegada,\
-                        (utilizacionTotal/(8*vector_eventos[i].tiempo)), sectorCobro.totalMinEsperados, sectorCobro.totalMinEsperados/sectorCobro.contadorEstacionamientos
-                    ])
                 <tbody>
                     {lista.map((item, index) => (
                         <tr key={index}>
@@ -44,21 +37,21 @@ const ListadoColas = ({ lista }) => {
                             <td>{item[2]}</td> {/* Proxima llegada */}
                             <td>{item[3]}</td> {/* rndTipoAuto */}
                             <td>{item[4]}</td> {/* Auto tipo */}
-                            <td>{item[5]}</td> {/* estacionamiento0 */}
-                            <td>{item[6]}</td> {/* estacionamiento */}
-                            <td>{item[7]}</td> {/* estacionamiento */}
-                            <td>{item[8]}</td> {/* estacionamiento */}
-                            <td>{item[9]}</td> {/* estacionamiento */}
-                            <td>{item[10]}</td> {/* estacionamiento */}
-                            <td>{item[11]}</td> {/* estacionamiento */}
-                            <td>{item[12]}</td> {/* estacionamiento */}
-                            <td>{item[13]}</td> {/* estacionamiento */}
-                            <td>{item[14]}</td> {/* estacionamiento */}
-                            <td>{item[15]}</td> {/* estacionamiento */}
-                            <td>{item[16]}</td> {/* estacionamiento */}
-                            <td>{item[17]}</td> {/* estacionamiento */}
-                            <td>{item[18]}</td> {/* estacionamiento */}
-                            <td>{item[19]}</td> {/* estacionamiento */}
+                            <td>{item[5]}</td> 
+                            <td>{item[6]}</td> 
+                            <td>{item[7]}</td>
+                            <td>{item[8]}</td> 
+                            <td>{item[9]}</td> 
+                            <td>{item[10]}</td>
+                            <td>{item[11]}</td> 
+                            <td>{item[12]}</td> 
+                            <td>{item[13]}</td>
+                            <td>{item[14]}</td>
+                            <td>{item[15]}</td> 
+                            <td>{item[16]}</td> 
+                            <td>{item[17]}</td> 
+                            <td>{item[18]}</td>
+                            <td>{item[19]}</td> 
                             </tr>
                     ))}
                 </tbody>

@@ -7,7 +7,7 @@ const Colas = () => {
     const { register, handleSubmit } = useForm();
     const [Lista, setLista] = useState([]);
     const [error, setError] = useState(""); // Estado para manejar errores
-    const [estadisticas, setEstadisticas] = useState(""); // Estado para almacenar la variable de estadísticas
+
 
     const onSubmit = async (data) => {
         try {
@@ -30,11 +30,11 @@ const Colas = () => {
                 tabla_prob_duracion3: parseFloat(dato3hora),
                 tiempo_cobro: parseFloat(data.cobro),
             });
-
             // Verificar la estructura de los datos
             if (response.data && Array.isArray(response.data.data)) {
                 setLista(response.data.data);
                 setError(""); // Limpiar cualquier error previo
+                console.log(response)
             } else {
                 throw new Error('Datos inválidos recibidos del servidor.');
             }
