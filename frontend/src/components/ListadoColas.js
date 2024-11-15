@@ -1,4 +1,5 @@
 import React from 'react';
+import './cola.css';
 
 const ListadoColas = ({ lista }) => {
 
@@ -7,52 +8,52 @@ const ListadoColas = ({ lista }) => {
             <table className="table table-striped">
                 <thead>
                     <tr>
-                        <th>Tiempo</th>
-                        <th>Evento</th>
-                        <th>Siguiente_Evento</th>
-                        <th>Vehiculo</th>
-                        <th>Tipo_Vehiculo</th>
-                        <th>Estacionamiento 1</th>
-                        <th>Estacionamiento 2</th>
-                        <th>Estacionamiento 3</th>
-                        <th>Estacionamiento 4</th>
-                        <th>Estacionamiento 5</th>
-                        <th>Estacionamiento 6</th>
-                        <th>Estacionamiento 7</th>
-                        <th>Estacionamiento 8</th>
-                        <th>Recaudacion</th>
-                        <th>Estacionados esperando cobro</th>
-                        <th>Auto cobrando</th>
-                        <th>prox Auto a cobrar</th>
-                        <th>Porcentaje_Uso</th>
-                        <th>Tiempo total de espera</th>
-                        <th>Promedio_Tiempo</th>
+                        <th style={{ minWidth: '100px' }}>Tiempo(minutos)</th>
+                        <th style={{ minWidth: '120px' }}>Evento</th>
+                        <th style={{ minWidth: '150px' }}>Proxima Llegada</th>
+                        <th style={{ minWidth: '120px' }}>RND Vehiculo</th>
+                        <th style={{ minWidth: '130px' }}>Tipo Vehiculo</th>
+                        <th style={{ minWidth: '140px' }}>Estacionamiento 1</th>
+                        <th style={{ minWidth: '140px' }}>Estacionamiento 2</th>
+                        <th style={{ minWidth: '140px' }}>Estacionamiento 3</th>
+                        <th style={{ minWidth: '140px' }}>Estacionamiento 4</th>
+                        <th style={{ minWidth: '140px' }}>Estacionamiento 5</th>
+                        <th style={{ minWidth: '165px' }}>Estacionamiento 6</th>
+                        <th style={{ minWidth: '165px' }}>Estacionamiento 7</th>
+                        <th style={{ minWidth: '165px' }}>Estacionamiento 8</th>
+                        <th style={{ minWidth: '130px' }}>Recaudacion</th>
+                        <th style={{ minWidth: '170px' }}>Estacionados esperando cobro</th>
+                        <th style={{ minWidth: '130px' }}>Auto cobrando</th>
+                        <th style={{ minWidth: '160px' }}>Prox Auto a cobrar</th>
+                        <th style={{ minWidth: '140px' }}>Porcentaje Uso</th>
+                        <th style={{ minWidth: '150px' }}>Tiempo total de espera</th>
+                        <th style={{ minWidth: '150px' }}>Promedio Tiempo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {lista.map((item, index) => (
                         <tr key={index}>
-                            <td>{item[0]}</td> {/* tiempo */}
-                            <td>{item[1]}</td> {/* evento */}
-                            <td>{item[2]}</td> {/* Proxima llegada */}
-                            <td>{item[3]}</td> {/* rndTipoAuto */}
-                            <td>{item[4]}</td> {/* Auto tipo */}
-                            <td>{item[5]}</td> 
-                            <td>{item[6]}</td> 
+                            <td>{item[0]}</td>
+                            <td>{item[1]}</td>
+                            <td>{item[2]}</td>
+                            <td>{item[3]}</td>
+                            <td>{item[4]}</td>
+                            <td>{item[5]}</td>
+                            <td>{item[6]}</td>
                             <td>{item[7]}</td>
-                            <td>{item[8]}</td> 
-                            <td>{item[9]}</td> 
+                            <td>{item[8]}</td>
+                            <td>{item[9]}</td>
                             <td>{item[10]}</td>
-                            <td>{item[11]}</td> 
-                            <td>{item[12]}</td> 
+                            <td>{item[11]}</td>
+                            <td>{item[12]}</td>
                             <td>{item[13]}</td>
                             <td>{item[14]}</td>
-                            <td>{item[15]}</td> 
-                            <td>{item[16]}</td> 
-                            <td>{item[17]}</td> 
+                            <td>{item[15]}</td>
+                            <td>{item[16]}</td>
+                            <td>{item[17]}</td>
                             <td>{item[18]}</td>
-                            <td>{item[19]}</td> 
-                            </tr>
+                            <td>{item[19]}</td>
+                        </tr>
                     ))}
                 </tbody>
             </table>

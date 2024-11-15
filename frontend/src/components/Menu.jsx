@@ -5,9 +5,6 @@ function Menu() {
   return (
     <nav className="navbar navbar-dark bg-dark navbar-expand-md">
       <div className="container-fluid">
-        {/* <a className="navbar-brand" href="#!">
-          <i>Pymes</i>
-        </a> */}
         <button
           className="navbar-toggler"
           type="button"
@@ -39,6 +36,12 @@ function Menu() {
             <li className="nav-item">
               <NavLink className="nav-link" to="/colas">
                 Tercer TP
+              </NavLink>
+            </li>
+            
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/colas2">
+                Cuarto TP
               </NavLink>
             </li>
           </ul>

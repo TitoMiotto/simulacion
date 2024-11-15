@@ -3,25 +3,25 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import ListadoColas from './ListadoColas';
 
-const Colas = () => {
+const Colas2 = () => {
     const { register, handleSubmit } = useForm();
     const [Lista, setLista] = useState([]);
     const [error, setError] = useState(""); // Estado para manejar errores
 
-
+    // Función de envío de datos
     const onSubmit = async (data) => {
         try {
-
+            // Calcular datos derivados
             let dato2auto = parseFloat(data.dato1auto) + parseFloat(data.dato2auto);
             let dato2hora = parseFloat(data.dato1hora) + parseFloat(data.dato2hora);
             let dato3hora = dato2hora + parseFloat(data.dato3hora);
-            let hora_inicio = data.hora_inicio * 60;
+            let hora_inicio = data.hora_inicio * 60; // Convertir hora a minutos
 
             // Enviar los datos al backend
             const response = await axios.post('http://localhost:8000/generate', {
                 duracion_total: parseInt(data.tiempo),
-                iteraciones: parseInt(0),
-                hora_inicio: parseInt(0),
+                iteraciones: parseInt(data.iteracion_i),
+                hora_inicio: parseInt(hora_inicio),
                 proxima_llegada: parseFloat(data.llegadas),
                 tabla_prob_auto_1: parseFloat(data.dato1auto),
                 tabla_prob_auto_2: parseFloat(dato2auto),
@@ -30,15 +30,15 @@ const Colas = () => {
                 tabla_prob_duracion3: parseFloat(dato3hora),
                 tiempo_cobro: parseFloat(data.cobro),
             });
-            // Verificar la estructura de los datos
+
+            // Verificar que la respuesta es válida
             if (response.data && Array.isArray(response.data.data)) {
                 setLista(response.data.data);
                 setError(""); // Limpiar cualquier error previo
-                console.log(response)
+                console.log(response);
             } else {
                 throw new Error('Datos inválidos recibidos del servidor.');
             }
-
         } catch (error) {
             console.error('Error en la solicitud:', error.message);
             setError(error.message);  // Mostrar mensaje de error al usuario
@@ -56,7 +56,14 @@ const Colas = () => {
                             <label className="form-label">Tiempo de simulación:</label>
                             <input type="text" className="form-control" {...register('tiempo')} />
                         </div>
-
+                        <div className="mb-3">
+                            <label className="form-label">Cantidad de iteraciones a mostrar:</label>
+                            <input type="text" className="form-control" {...register('iteracion_i')} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Hora a partir de la cual mostrar:</label>
+                            <input type="text" className="form-control" {...register('hora_inicio')} />
+                        </div>
                         <div className="mb-3">
                             <label className="form-label">Tiempo entre llegadas:</label>
                             <input type="text" className="form-control" {...register('llegadas')} />
@@ -91,4 +98,4 @@ const Colas = () => {
     );
 };
 
-export default Colas;
+export default Colas2;

@@ -152,6 +152,22 @@ class SectorCobro:
         self.proximo = None
         self.Actual = None
         self.totalMinEsperados = 0
+        self.Yinicial = 130
+        self.YParaGrandes = 180
+
+    def calcularTiempo(self, tiempo):
+        tiempo = self.Yinicial
+        if self.Actual.tipo == 3:
+            tiempo = self.YParaGrandes
+        C = 0
+        if self.Actual:
+            c += 1
+            if self.proximo:
+                c += 1
+
+        Fprima = C+ 0,2 * self.tiempoCobro + tiempo
+        
+
 
     def setProximo(self, Vehiculo):
         if self.Actual:
