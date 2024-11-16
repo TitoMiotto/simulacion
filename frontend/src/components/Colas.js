@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import ListadoColas from './ListadoColas';
+import ListadoTablas from './ListadoTablas';
 
 const Colas = () => {
     const { register, handleSubmit } = useForm();
     const [Lista, setLista] = useState([]);
+    const [Tabla, setTabla] = useState([]);
     const [error, setError] = useState(""); // Estado para manejar errores
 
 
@@ -33,6 +35,7 @@ const Colas = () => {
             // Verificar la estructura de los datos
             if (response.data && Array.isArray(response.data.data)) {
                 setLista(response.data.data);
+                setTabla(response.data.tablas);
                 setError(""); // Limpiar cualquier error previo
                 console.log(response)
             } else {
@@ -94,7 +97,15 @@ const Colas = () => {
                     <ListadoColas lista={Lista} />
                 </>
             )}
-        </div>
+
+            {Tabla.length > 0 && (
+                    <>
+                    <ListadoTablas lista={Tabla} />
+                    </>
+                )}
+
+            </div>
+        
     );
 };
 
