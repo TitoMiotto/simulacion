@@ -228,15 +228,14 @@ class SectorCobro:
     def cobrar(self):
         self.sum_cobro += (self.Actual.tiempoEstacionado/60) * self.Actual.tipo * 500
 
-    def calcularDemoraCobrado(self, tiempo):
+    """def calcularDemoraCobrado(self, tiempo):
         if not self.AceptaVehiculo():
             C = len(self.vector_espera) + 1
         elif self.proximo:
             C = 1
         elif self.Actual:
             C = 0
-        
-        
+            
         D = 130
         t = DActual = 0 
         derivada = 0
@@ -256,10 +255,42 @@ class SectorCobro:
             tabla.append(log)
         self.vector_calculo_demoras.append(tabla)
         print(tabla)
-        return t
-
+        return t"""
         
+    def calcularDemoraCobrado(self, tiempo):
+        if not self.AceptaVehiculo():
+            C = len(self.vector_espera) + 1
+        elif self.proximo:
+            C = 1
+        elif self.Actual:
+            C = 0
 
+        D = 130 # Tiempo de corte
+        if self.Actual.tipo == 3:
+            D = 180 # Tiempo de corte para vehiculos grandes 
+
+        # Variables iniciales
+        t = 0  # Tiempo actual (x_n)
+        DActual = 0  # Valor acumulado (Y_n)
+        h = 1  # Variable de paso --- 1 min
+        tabla = [self.Actual.getTipo(), D, C, tiempo]
+
+        # Método de Euler para aproximar
+        while DActual < D:
+            log = []
+            log.append(t)
+            log.append(DActual)
+            derivada = C + 0.2 * self.tiempoCobro + t ** 2  # F'(x, y)
+            DActual += h * derivada  # Y_{n+1} = Y_n + h * F'(x, y)
+            t += h  # Incremento del tiempo (x_{n+1} = x_n + h)
+            log.append(derivada)
+            log.append(t)
+            log.append(DActual)
+            tabla.append(log)
+            
+        self.vector_calculo_demoras.append(tabla)
+        print(tabla)
+        return t
 
 
 class EventoCobro:
